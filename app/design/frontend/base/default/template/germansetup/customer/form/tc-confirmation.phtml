@@ -21,7 +21,7 @@
  * @since     0.1.0
  */
 /**
- * Setup script; Adds the delivery_time attribute for products
+ * Checkout Agreements
  *
  * @category  FireGento
  * @package   FireGento_GermanSetup
@@ -32,30 +32,24 @@
  * @since     0.1.0
  */
 
-/* @var $installer Mage_Eav_Model_Entity_Setup */
-$installer = $this;
-$installer->startSetup();
+/**
+ * @var $this Mage_Checkout_Block_Agreements
+ */
 
-$installer->addAttribute(
-    'catalog_product',
-    'delivery_time',
-    array(
-        'label'                      => 'Lieferzeit',
-        'input'                      => 'text',
-        'required'                   => 0,
-        'user_defined'               => 1,
-        'default'                    => '2-3 Tage',
-        'group'                      => 'General',
-        'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-        'visible'                    => 1,
-        'filterable'                 => 0,
-        'searchable'                 => 0,
-        'comparable'                 => 1,
-        'visible_on_front'           => 1,
-        'visible_in_advanced_search' => 1,
-        'used_in_product_listing'    => 1,
-        'is_html_allowed_on_front'   => 1,
-    )
-);
+/* @var $helper FireGento_GermanSetup_Helper_Data */
+$helper = $this->helper('germansetup');
+?>
 
-$installer->endSetup();
+<?php if (!$this->getAgreements()) return; ?>
+
+<?php foreach ($this->getAgreements() as $_a): ?>
+<li class="control">
+    <p class="agree">
+        <?php if( $_a->getIsRequired() ): ?>
+            <input type="checkbox" id="agreement-<?php echo $_a->getId()?>" name="agreement[<?php echo $_a->getId()?>]" value="1" title="<?php echo $this->htmlEscape( $_a->getCheckboxText() ) ?>" class="checkbox required-entry"/>
+        <?php endif; ?>
+        <label <?php if( $_a->getIsRequired() ): ?>for="agreement-<?php echo $_a->getId()?>"<?php endif; ?> style="float:none;"><?php echo $_a->getIsHtml() ? $_a->getCheckboxText() : $this->htmlEscape( $_a->getCheckboxText() ) ?></label>
+        <a href="<?php echo $helper->getAgreementUrl( $_a ) ?>" onclick="window.open(this.href, '', 'width=600,height=600,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes').focus(); return false;"><?php echo $this->__( '[Show]' ) ?></a>
+    </p>
+</li>
+<?php endforeach ?>

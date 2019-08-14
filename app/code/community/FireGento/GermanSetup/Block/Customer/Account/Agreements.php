@@ -18,45 +18,36 @@
  * @copyright 2012 FireGento Team (http://www.firegento.de). All rights served.
  * @license   http://opensource.org/licenses/gpl-3.0 GNU General Public License, version 3 (GPLv3)
  * @version   $Id:$
- * @since     1.0.5
+ * @since     0.1.0
  */
 /**
- * Setup script; Adds a new column 'Visible in Checkout' to attributes
+ * Block to display agreements on customer registration.
  *
  * @category  FireGento
  * @package   FireGento_GermanSetup
  * @author    FireGento Team <team@firegento.com>
- * @copyright 2012 FireGento Team (http://www.firegento.de). All rights served.
+ * @copyright 2013 FireGento Team (http://www.firegento.de). All rights served.
  * @license   http://opensource.org/licenses/gpl-3.0 GNU General Public License, version 3 (GPLv3)
  * @version   $Id:$
- * @since     1.0.5
+ * @since     1.2.2
  */
 
-/* @var $this Mage_Eav_Model_Entity_Setup */
-$installer = $this;
-$installer->startSetup();
+class FireGento_GermanSetup_Block_Customer_Account_Agreements extends Mage_Checkout_Block_Agreements
+{
 
-if (version_compare(Mage::getVersion(), '1.6', '<')) {
-
-    $installer->run("
-        ALTER TABLE `{$installer->getTable('catalog/eav_attribute')}`
-        ADD `is_visible_on_checkout` SMALLINT(5) NOT NULL DEFAULT '0';
-    ");
-
-} else {
-
-    $installer->getConnection()->addColumn(
-        $installer->getTable('catalog/eav_attribute'),
-        'is_visible_on_checkout',
-        array(
-            'type'     => Varien_Db_Ddl_Table::TYPE_SMALLINT,
-            'unsigned' => true,
-            'nullable' => false,
-            'default'  => '0',
-            'comment'  => 'Visible in Checkout'
-        )
-    );
+    /**
+     * Filter by "Agreement Type"
+     *
+     * @return mixed
+     */
+    public function getAgreements()
+    {
+        $agreements = parent::getAgreements();
+        $agreements->addFieldToFilter('agreement_type', array('in' => array(
+            FireGento_GermanSetup_Model_Source_AgreementType::AGREEMENT_TYPE_CUSTOMER,
+            FireGento_GermanSetup_Model_Source_AgreementType::AGREEMENT_TYPE_BOTH,
+        )));
+        return $agreements;
+    }
 
 }
-
-$installer->endSetup();

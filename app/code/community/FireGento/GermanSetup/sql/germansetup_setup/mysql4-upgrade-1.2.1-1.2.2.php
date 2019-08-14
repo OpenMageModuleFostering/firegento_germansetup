@@ -17,11 +17,10 @@
  * @author    FireGento Team <team@firegento.com>
  * @copyright 2012 FireGento Team (http://www.firegento.de). All rights served.
  * @license   http://opensource.org/licenses/gpl-3.0 GNU General Public License, version 3 (GPLv3)
- * @version   $Id:$
  * @since     0.1.0
  */
 /**
- * Setup script; Adds the delivery_time attribute for products
+ * Setup script; Adds the is_required field for the checkout agreements
  *
  * @category  FireGento
  * @package   FireGento_GermanSetup
@@ -29,33 +28,33 @@
  * @copyright 2012 FireGento Team (http://www.firegento.de). All rights served.
  * @license   http://opensource.org/licenses/gpl-3.0 GNU General Public License, version 3 (GPLv3)
  * @version   $Id:$
- * @since     0.1.0
+ * @since     1.2.2
  */
 
-/* @var $installer Mage_Eav_Model_Entity_Setup */
+/** @var $installer Mage_Catalog_Model_Resource_Eav_Mysql4_Setup */
 $installer = $this;
 $installer->startSetup();
 
-$installer->addAttribute(
-    'catalog_product',
-    'delivery_time',
-    array(
-        'label'                      => 'Lieferzeit',
-        'input'                      => 'text',
-        'required'                   => 0,
-        'user_defined'               => 1,
-        'default'                    => '2-3 Tage',
-        'group'                      => 'General',
-        'global'                     => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-        'visible'                    => 1,
-        'filterable'                 => 0,
-        'searchable'                 => 0,
-        'comparable'                 => 1,
-        'visible_on_front'           => 1,
-        'visible_in_advanced_search' => 1,
-        'used_in_product_listing'    => 1,
-        'is_html_allowed_on_front'   => 1,
-    )
-);
+if (version_compare(Mage::getVersion(), '1.6', '<')) {
+
+    $installer->run("
+        ALTER TABLE `{$installer->getTable('checkout/agreement')}`
+        ADD `agreement_type` SMALLINT( 5 ) NOT NULL DEFAULT '0' COMMENT 'Agreement Type'
+    ");
+
+} else {
+
+    $installer->getConnection()->addColumn(
+            $installer->getTable('checkout/agreement'),
+            'agreement_type',
+            array(
+                'type'      => Varien_Db_Ddl_Table::TYPE_SMALLINT,
+                'unsigned'  => true,
+                'nullable'  => false,
+                'default'   => '0',
+                'comment'   => 'Agreement Type'
+            )
+        );
+}
 
 $installer->endSetup();
