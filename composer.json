@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/FireGento_GermanSetup",
+    "type": "magento-module",
+    "license": "GNU-General-Public-License,-version-3-(GPLv3)",
+    "homepage": "",
+    "description": "Basic configuration for German shops - the alternative for solutions like Market Ready Germany and German Shop ",
+    "authors": [
+    {
+        "name": "FireGento Team",
+        "email": "team@firegento.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
