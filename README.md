@@ -1,3 +1,5 @@
+
+
 ## Original Package Description
 
 Basic configuration for German shops - the alternative for solutions like Market Ready Germany and German Shop 
